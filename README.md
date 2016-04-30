@@ -12,6 +12,8 @@ All operations require an API token which can be found in your Circle CI account
 (ns myproject.core
   (:require [circle-clj :as circle]))
 
+;; This is your API token found under your Circle CI account settings
+
 (def token "XYZ")
 
 ;; Your profile
