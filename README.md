@@ -8,7 +8,7 @@ A Clojure client for Circle CI API
 
 All operations require an API token which can be found in your Circle CI account settings
 
-```
+```clojure
 (ns myproject.core
   (:require [circle-clj :as circle]))
 
