@@ -42,17 +42,14 @@
   [token]
   (request :get "/projects" token))
 
-;; GET: /project/:username/:project
-;; Build summary for each of the last 30 builds for a single git repo.
-
 (defn project-summary
+  "Build summary for each of the last 30 builds for a single git repo"
   [token username project]
-  (request :get (format "/project/%s/%s" username project) token))
-
-;; GET: /recent-builds
-;; Build summary for each of the last 30 recent builds, ordered by build_num.
+  (request :get 
+    (format "/project/%s/%s" username project) token))
 
 (defn recent-builds
+  "Build summary for each of the last 30 recent builds, ordered by build_num"
   [token]
   (request :get "/recent-builds" token))
 
@@ -60,7 +57,7 @@
   "GET: /project/:username/:project/:build_num
    Full details for a single build. The response includes all of the fields from the build summary.
    This is also the payload for the [notification webhooks](/docs/configuration/#notify),
-   in which case this object is the value to a key named 'payload'."
+   in which case this object is the value to a key named 'payload'"
   [token username project build]
   (request :get
     (format "/project/%s/%s/%s" username project (str build))
