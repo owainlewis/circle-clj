@@ -1,5 +1,7 @@
 # Circle
 
+[![Circle CI](https://circleci.com/gh/owainlewis/circle-clj.svg?style=svg)](https://circleci.com/gh/owainlewis/circle-clj)
+
 A Clojure client for Circle CI API
 
 ## Usage
