@@ -1,5 +1,6 @@
 (ns circle-clj.core
   (:require [clj-http.client :as http]
+            [clojure.string :as s]
             [cheshire.core :as json]))
 
 (def endpoint "https://circleci.com/api/v1")
@@ -32,26 +33,42 @@
     ([method resource token]
       (request method resource token nil nil)))
 
+(defn path-builder
+  "Utility method for constructing resource paths"
+  [& parts]
+  (let [normalized-parts (map str parts) ;; handle any numeric values
+        joined (s/join "/" normalized-parts)]
+    (str "/" joined)))
+
 (defn me
   "Provides information about the signed in user."
   [token]
-  (request :get "/me" token))
+  (request :get (path-builder "me") token))
 
 (defn projects
   "List of all the projects you're following on CircleCI, with build information organized by branch."
   [token]
-  (request :get "/projects" token))
+  (request :get (path-builder "projects") token))
 
 (defn project-summary
-  "Build summary for each of the last 30 builds for a single git repo"
-  [token username project]
-  (request :get 
-    (format "/project/%s/%s" username project) token))
+  "Build summary for each of the last 30 builds for a single git repo.
+   The following query params may also be added:
+     limit -> The number of builds to return. Maximum 100, defaults to 30.
+     offset -> The API returns builds starting from this offset, defaults to 0.
+     filter -> Restricts which builds are returned. Set to completed, successful, failed, running, or defaults to no filter
+  "
+  [token username project query-params]
+  (request :get (path-builder "project" username project) token query-params nil))
 
 (defn recent-builds
-  "Build summary for each of the last 30 recent builds, ordered by build_num"
-  [token]
-  (request :get "/recent-builds" token))
+  "Build summary for each of the last 30 recent builds, ordered by build_num
+   The follwing query params may also be added
+
+   limit -> The number of builds to return. Maximum 100, defaults to 30.
+   offset -> The API returns builds starting from this offset, defaults to 0.
+  "
+  [token query-params]
+  (request :get "/recent-builds" token query-params nil))
 
 (defn build-details
   "GET: /project/:username/:project/:build_num
@@ -88,8 +105,12 @@
     (format "/project/%s/%s/%s/cancel" username project (str build))
       token))
 
-;; POST: /project/:username/:project/:build_num/ssh-users
-;; Adds a user to the build's SSH permissions.
+(defn add-ssh-user
+  "Adds a user to the build's SSH permissions"
+  [token username project build]
+    (request :post
+    (format "/project/%s/%s/%s/ssh-users" username project (str build))
+      token))
 
 (defn trigger-build
   "Triggers a new build, returns a summary of the build.
@@ -130,3 +151,27 @@
 
 ;; POST: /user/heroku-key
 ;; Adds your Heroku API key to CircleCI, takes apikey as form param name.
+
+(defn list-env-vars
+  "Lists the environment variables for :project"
+  [token username project]
+  (request :get
+    (format "/project/%s/%s/envvar" username project) token))
+
+(defn add-env-var
+  "Creates a new environment variables"
+  [token username project data]
+    (request :post
+      (format "/project/%s/%s/envvar" username project) token nil data))
+
+(defn get-env-var
+  "Gets the hidden value of environment variable :name"
+  [token username project envvar]
+  (request :get
+    (format "/project/%s/%s/envvar/%s" username project envvar) token))
+
+(defn delete-env-var
+  "Deletes the environment variable named ':name'"
+  [token username project envvar]
+  (request :delete
+    (format "/project/%s/%s/envvar/%s" username project envvar) token))
