@@ -24,7 +24,7 @@
                               ((juxt :status :body)))
                         (catch Exception e
                           [nil (.getMessage e)]))]
-      (if (= 200 status)
+      (if (or (= 200 status) (= 201 status))
         (with-meta
           (json/parse-string resp true)
           {:operation (format "%s %s"
@@ -115,10 +115,10 @@
 (defn trigger-build
   "Triggers a new build, returns a summary of the build.
    [Optional build parameters can be set using an experimental API](/docs/parameterized-builds/)"
-  [token username project branch & build-params]
+  [token username project branch]
   (request :post
     (format "/project/%s/%s/tree/%s" username project branch)
-    token { } (into {} build-params)))
+    token))
 
 ;; POST: /project/:username/:project/ssh-key
 ;; Create an ssh key used to access external systems that require SSH key-based authentication
