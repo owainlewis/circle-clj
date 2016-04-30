@@ -58,7 +58,8 @@
      filter -> Restricts which builds are returned. Set to completed, successful, failed, running, or defaults to no filter
   "
   [token username project query-params]
-  (request :get (path-builder "project" username project) token query-params nil))
+  (let [resource (path-builder "project" username project)]
+    (request :get resource token query-params nil)))
 
 (defn recent-builds
   "Build summary for each of the last 30 recent builds, ordered by build_num
@@ -68,7 +69,8 @@
    offset -> The API returns builds starting from this offset, defaults to 0.
   "
   [token query-params]
-  (request :get "/recent-builds" token query-params nil))
+  (let [resource (path-builder "recent-builds")]
+    (request :get resource token query-params nil)))
 
 (defn build-details
   "GET: /project/:username/:project/:build_num
@@ -76,49 +78,43 @@
    This is also the payload for the [notification webhooks](/docs/configuration/#notify),
    in which case this object is the value to a key named 'payload'"
   [token username project build]
-  (request :get
-    (format "/project/%s/%s/%s" username project (str build))
-      token))
+  (let [resource (path-builder "project" username project build)]
+    (request :get resource token)))
 
 (defn list-artifacts
   "GET: /project/:username/:project/:build_num/artifacts
    List the artifacts produced by a given build."
   [token username project build]
-  (request :get
-    (format "/project/%s/%s/%s/artifacts" username project (str build))
-    token))
+  (let [resource (path-builder "project" username project build)]
+    (request :get resource token)))
 
 (defn retry-build
   "POST: /project/:username/:project/:build_num/retry
    Retries the build, returns a summary of the new build."
   [token username project build]
-  (request :post
-    (format "/project/%s/%s/%s/retry" username project (str build))
-    token))
+  (let [resource (path-builder "project" username project build)]
+    (request :post resource token)))
 
 ;; POST: /project/:username/:project/:build_num/cancel
 ;; Cancels the build, returns a summary of the build.
 
 (defn cancel-build
   [token username project build]
-  (request :post
-    (format "/project/%s/%s/%s/cancel" username project (str build))
-      token))
+  (let [resource (path-builder "project" username project build)]
+    (request :post resource token)))
 
 (defn add-ssh-user
   "Adds a user to the build's SSH permissions"
   [token username project build]
-    (request :post
-    (format "/project/%s/%s/%s/ssh-users" username project (str build))
-      token))
+  (let [resource (path-builder "project" username project build)]
+    (request :post resource token)))
 
 (defn trigger-build
   "Triggers a new build, returns a summary of the build.
    [Optional build parameters can be set using an experimental API](/docs/parameterized-builds/)"
   [token username project branch]
-  (request :post
-    (format "/project/%s/%s/tree/%s" username project branch)
-    token))
+  (let [resource (path-builder "project" username project "tree" branch)]
+    (request :post resource token)))
 
 ;; POST: /project/:username/:project/ssh-key
 ;; Create an ssh key used to access external systems that require SSH key-based authentication
@@ -126,9 +122,8 @@
 (defn get-checkout-keys
   "Lists checkout keys"
   [token username project]
-  (request :get
-    (format "/project/%s/%s/checkout-key" username project)
-    token))
+  (let [resource (path-builder "project" username project "checkout-key")]
+    (request :get resource token)))
 
 ;; POST: /project/:username/:project/checkout-key
 ;; Create a new checkout key.
@@ -136,9 +131,8 @@
 (defn get-checkout-key
   "Get a checkout key"
   [token username project fingerprint]
-  (request :get
-    (format "/project/%s/%s/checkout-key/%s" username project fingerprint)
-    token))
+  (let [resource (path-builder "project" username project "checkout-key" fingerprint)]
+    (request :get resource token)))
 
 ;; DELETE: /project/:username/:project/checkout-key/:fingerprint
 ;; Delete a checkout key.
@@ -155,23 +149,23 @@
 (defn list-env-vars
   "Lists the environment variables for :project"
   [token username project]
-  (request :get
-    (format "/project/%s/%s/envvar" username project) token))
+  (let [resource (path-builder "project" username project "envvar")]
+    (request :get resource token)))
 
 (defn add-env-var
   "Creates a new environment variables"
   [token username project data]
-    (request :post
-      (format "/project/%s/%s/envvar" username project) token nil data))
+  (let [resource (path-builder "project" username project "envvar")]
+    (request :post resource token nil data)))
 
 (defn get-env-var
   "Gets the hidden value of environment variable :name"
   [token username project envvar]
-  (request :get
-    (format "/project/%s/%s/envvar/%s" username project envvar) token))
+  (let [resource (path-builder "project" username project "envvar" envvar)]
+    (request :get resource token)))
 
 (defn delete-env-var
   "Deletes the environment variable named ':name'"
   [token username project envvar]
-  (request :delete
-    (format "/project/%s/%s/envvar/%s" username project envvar) token))
+  (let [resource (path-builder "project" username project "envvar" envvar)]
+    (request :delete resource token)))
