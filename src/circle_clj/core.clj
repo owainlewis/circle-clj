@@ -95,12 +95,10 @@
   (let [resource (path-builder "project" username project build)]
     (request :post resource token)))
 
-;; POST: /project/:username/:project/:build_num/cancel
-;; Cancels the build, returns a summary of the build.
-
 (defn cancel-build
+  "Cancels the build, returns a summary of the build"
   [token username project build]
-  (let [resource (path-builder "project" username project build)]
+  (let [resource (path-builder "project" username project build "cancel")]
     (request :post resource token)))
 
 (defn add-ssh-user
@@ -116,35 +114,17 @@
   (let [resource (path-builder "project" username project "tree" branch)]
     (request :post resource token)))
 
-;; POST: /project/:username/:project/ssh-key
-;; Create an ssh key used to access external systems that require SSH key-based authentication
-
 (defn get-checkout-keys
   "Lists checkout keys"
   [token username project]
   (let [resource (path-builder "project" username project "checkout-key")]
     (request :get resource token)))
 
-;; POST: /project/:username/:project/checkout-key
-;; Create a new checkout key.
-
 (defn get-checkout-key
   "Get a checkout key"
   [token username project fingerprint]
   (let [resource (path-builder "project" username project "checkout-key" fingerprint)]
     (request :get resource token)))
-
-;; DELETE: /project/:username/:project/checkout-key/:fingerprint
-;; Delete a checkout key.
-
-;; DELETE: /project/:username/:project/build-cache
-;; Clears the cache for a project.
-
-;; POST: /user/ssh-key
-;; Adds a CircleCI key to your GitHub User account.
-
-;; POST: /user/heroku-key
-;; Adds your Heroku API key to CircleCI, takes apikey as form param name.
 
 (defn list-env-vars
   "Lists the environment variables for :project"
@@ -169,3 +149,24 @@
   [token username project envvar]
   (let [resource (path-builder "project" username project "envvar" envvar)]
     (request :delete resource token)))
+  
+;; TODO
+
+;; POST: /project/:username/:project/ssh-key
+;; Create an ssh key used to access external systems that require SSH key-based authentication
+
+;; POST: /project/:username/:project/checkout-key
+;; Create a new checkout key.
+
+;; DELETE: /project/:username/:project/checkout-key/:fingerprint
+;; Delete a checkout key.
+
+;; DELETE: /project/:username/:project/build-cache
+;; Clears the cache for a project.
+
+;; POST: /user/ssh-key
+;; Adds a CircleCI key to your GitHub User account.
+
+;; POST: /user/heroku-key
+;; Adds your Heroku API key to CircleCI, takes apikey as form param name.
+  
