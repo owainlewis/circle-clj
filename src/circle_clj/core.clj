@@ -149,24 +149,3 @@
   [token username project envvar]
   (let [resource (path-builder "project" username project "envvar" envvar)]
     (request :delete resource token)))
-  
-;; TODO
-
-;; POST: /project/:username/:project/ssh-key
-;; Create an ssh key used to access external systems that require SSH key-based authentication
-
-;; POST: /project/:username/:project/checkout-key
-;; Create a new checkout key.
-
-;; DELETE: /project/:username/:project/checkout-key/:fingerprint
-;; Delete a checkout key.
-
-;; DELETE: /project/:username/:project/build-cache
-;; Clears the cache for a project.
-
-;; POST: /user/ssh-key
-;; Adds a CircleCI key to your GitHub User account.
-
-;; POST: /user/heroku-key
-;; Adds your Heroku API key to CircleCI, takes apikey as form param name.
-  
