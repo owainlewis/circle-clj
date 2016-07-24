@@ -17,19 +17,21 @@
               (let [qp {:circle-token token}]
                 (if (map? query-params)
                   (merge qp query-params)
-                  qp))}]
-    (let [[status resp] (try
-                          (-> underlying-request
-                              http/request
-                              ((juxt :status :body)))
-                        (catch Exception e
-                          [nil (.getMessage e)]))]
-      (if (or (= 200 status) (= 201 status))
+                  qp))}
+          [status resp]
+            (try
+              (-> underlying-request
+                  http/request
+                 ((juxt :status :body)))
+              (catch Exception e
+              [nil (.getMessage e)]))]
+      (if (or (= 200 status)
+              (= 201 status))
         (with-meta
           (json/parse-string resp true)
           {:operation (format "%s %s"
                         (.toUpperCase (name method)) resource)})
-        {:error resp}))))
+        {:error resp})))
     ([method resource token]
       (request method resource token nil nil)))
 
