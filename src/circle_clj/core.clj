@@ -3,7 +3,7 @@
             [clojure.string :as s]
             [cheshire.core :as json]))
 
-(def endpoint "https://circleci.com/api/v1")
+(def ^:private endpoint "https://circleci.com/api/v1")
 
 (defn request
   "Runs a HTTP request to Circle CI API"
